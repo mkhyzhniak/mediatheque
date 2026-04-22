@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mediatheque — Wishlist</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+    <div class="hd">
+        <div>
+            <div class="logo">MEDIATHEQUE<span class="logo-dot"></span></div>
+            <div class="logo-sub">PHYSICAL MEDIA LIBRARY</div>
+        </div>
+        <div class="hd-right">
+            <form action="/search/results" method="get" style="display:inline;">
+                <input class="search-box" name="query" placeholder="SEARCH ALBUM..." />
+            </form>
+            <div class="hd-pill on">ONLINE</div>
+        </div>
+    </div>
+
+    <div class="nav">
+        <a href="/collection" class="nb">COLLECTION</a>
+        <a href="/collection/wishlist" class="nb on">WISHLIST</a>
+    </div>
+
+    <div class="content">
+        <div class="top-row">
+            <div class="sort-block">
+                <div class="sort-label"><span>//</span> SORT BY</div>
+                <select class="sort-select">
+                    <option>DATE (NEW → OLD)</option>
+                    <option>DATE (OLD → NEW)</option>
+                    <option>ARTIST (A → Z)</option>
+                    <option>ARTIST (Z → A)</option>
+                    <option>ALBUM (A → Z)</option>
+                    <option>ALBUM (Z → A)</option>
+                </select>
+            </div>
+
+            <div class="filter-panel">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <details class="filter-dropdown">
+                        <summary>
+                            <div class="filter-box">
+                                <span class="filter-placeholder">[ ... ]</span>
+                                <span class="filter-caret">▾</span>
+                            </div>
+                        </summary>
+                        <div class="filter-menu">
+                            <div class="filter-group">
+                                <label class="filter-title"><input type="checkbox"> TYPE</label>
+                                <label class="filter-item"><input type="checkbox"> CASSETTE</label>
+                                <label class="filter-item"><input type="checkbox"> VINYL</label>
+                                <label class="filter-item"><input type="checkbox"> CD</label>
+                            </div>
+                        </div>
+                    </details>
+                    <div class="filter-label">FILTER BY <span class="filter-accent">\\</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(entries)}" class="empty-message">
+            YOUR WISHLIST IS EMPTY.
+        </div>
+
+        <div class="grid" th:unless="${#lists.isEmpty(entries)}">
+            <div th:each="entry : ${entries}" class="card">
+                <div class="card-cover">
+                    <div th:if="${entry.coverUrl != null}">
+                        <img th:src="${entry.coverUrl}" alt="Cover">
+                    </div>
+                    <div th:if="${entry.coverUrl == null}" class="cover-placeholder">
+                        <div class="cp-reel"><div class="cp-inner"></div></div>
+                        <div class="cp-reel"><div class="cp-inner"></div></div>
+                    </div>
+                </div>
+                <div class="card-bd">
+                    <div class="card-title" th:text="${entry.albumTitle}">Album Title</div>
+                    <div class="card-artist" th:text="${entry.artistName}">ARTIST</div>
+                    <div class="card-fmt" th:text="${entry.format}">CASSETTE</div>
+                    <div class="card-acts">
+                        <form th:action="@{'/collection/' + ${entry.id} + '/move'}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success">MOVE TO COLLECTION</button>
+                        </form>
+                        <form th:action="@{'/collection/' + ${entry.id} + '/delete'}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-del">DELETE</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="ft">MEDIATHEQUE · <span class="ft-accent">PHYSICAL MEDIA LIBRARY</span></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="dots">
+                <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div>
+                <div class="dot"></div><div class="dot"></div>
+            </div>
+            <div class="ft" th:text="'ITEMS: ' + ${entries.size()}">ITEMS: 0</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

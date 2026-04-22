@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mediatheque — Entry</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #d0d0cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container" style="max-width:420px;width:90%;">
+    <div style="font-size:13px;color:#e85d26;letter-spacing:4px;margin-bottom:16px;font-weight:700;">
+        <span th:if="${isEdit}">// EDIT ENTRY</span>
+        <span th:unless="${isEdit}">// ADD TO COLLECTION</span>
+    </div>
+
+    <div th:if="${album != null}" style="margin-bottom:16px;">
+        <div class="card-title" th:text="${album.title}">Album</div>
+        <div class="card-artist" th:text="${album.artistName}">Artist</div>
+    </div>
+
+    <div th:if="${isEdit}" style="margin-bottom:16px;">
+        <div class="card-title" th:text="${entry.albumTitle}">Album</div>
+        <div class="card-artist" th:text="${entry.artistName}">Artist</div>
+    </div>
+
+    <form th:if="${isEdit}" th:action="@{'/collection/edit/' + ${entry.id}}" method="post" th:object="${entry}">
+        <div class="form-group">
+            <label class="form-label">FORMAT</label>
+            <div style="font-size:12px;color:#1a1a1a;letter-spacing:2px;" th:text="${entry.format}">CASSETTE</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">CONDITION</label>
+            <select th:field="*{condition}" class="form-control">
+                <option value="">-- SELECT --</option>
+                <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}">MINT</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">NOTES</label>
+            <textarea th:field="*{notes}" class="form-control" placeholder="Original pressing, limited edition..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">DATE ADDED</label>
+            <input type="date" th:field="*{addedDate}" class="form-control" />
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:20px;">
+            <button type="submit" class="btn" style="border-color:#e85d26;color:#e85d26;">SAVE</button>
+            <a href="javascript:history.back()" class="btn">CANCEL</a>
+        </div>
+    </form>
+
+    <form th:unless="${isEdit}" th:action="@{'/collection/add/' + ${album.id}}" method="post" th:object="${entry}">
+        <div class="form-group">
+            <label class="form-label">FORMAT</label>
+            <div style="font-size:12px;color:#1a1a1a;letter-spacing:2px;" th:text="${entry.format}">CASSETTE</div>
+            <input type="hidden" th:field="*{format}" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">CONDITION</label>
+            <select th:field="*{condition}" class="form-control">
+                <option value="">-- SELECT --</option>
+                <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}">MINT</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">NOTES</label>
+            <textarea th:field="*{notes}" class="form-control" placeholder="Original pressing, limited edition..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">DATE ADDED</label>
+            <input type="date" th:field="*{addedDate}" class="form-control" />
+        </div>
+
+        <input type="hidden" name="inWishlist" value="false" />
+
+        <div style="display:flex;gap:8px;margin-top:20px;">
+            <button type="submit" class="btn" style="border-color:#e85d26;color:#e85d26;">ADD</button>
+            <a href="javascript:history.back()" class="btn">CANCEL</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
