@@ -35,4 +35,8 @@ public class CollectionEntry {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

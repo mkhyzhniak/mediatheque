@@ -8,22 +8,8 @@
 </head>
 <body>
 <div class="app">
-    <div class="hd">
-        <div>
-            <div class="logo">MEDIATHEQUE<span class="logo-dot"></span></div>
-            <div class="logo-sub">PHYSICAL MEDIA LIBRARY</div>
-        </div>
-        <div class="hd-right">
-            <form action="/search/results" method="get" style="display:inline;">
-                <input class="search-box" name="query" placeholder="SEARCH ALBUM..." th:value="${query}" />
-            </form>
-        </div>
-    </div>
-
-    <div class="nav">
-        <a href="/collection" class="nb">COLLECTION</a>
-        <a href="/collection/wishlist" class="nb">WISHLIST</a>
-    </div>
+    <div th:replace="~{fragments/fragments :: header}"></div>
+    <div th:replace="~{fragments/fragments :: nav('search')}"></div>
 
     <div class="content">
         <div th:if="${hasResults == null}" class="empty-message">
@@ -37,10 +23,10 @@
         <div th:if="${hasResults != null && hasResults}">
 
             <details th:if="${!vinyl.isEmpty()}" open>
-                <summary class="sort-label" style="cursor:pointer;margin-bottom:12px;">
-                    <span>//</span> VINYL <span style="color:#aaa;" th:text="'(' + ${vinyl.size()} + ')'"></span>
+                <summary class="sort-label summary-label">
+                    <span>//</span> VINYL <span class="summary-count" th:text="'(' + ${vinyl.size()} + ')'"></span>
                 </summary>
-                <div class="grid" style="margin-bottom:24px;">
+                <div class="grid grid-section">
                     <div th:each="album : ${vinyl}" class="card">
                         <div class="card-cover">
                             <div th:if="${album.coverUrl != null && !album.coverUrl.isEmpty()}">
@@ -51,10 +37,10 @@
                             </div>
                         </div>
                         <div class="card-bd">
-                            <div class="card-title" th:text="${album.title}">Album</div>
-                            <div class="card-artist" th:text="${album.artistName + (album.year != 0 ? ' · ' + album.year : '')}">ARTIST</div>
-                            <div class="card-notes" th:text="${album.genre + ' · ' + album.label}">Genre · Label</div>
-                            <form th:action="@{/search/add}" method="post" class="card-acts" style="flex-wrap:wrap;gap:6px;">
+                            <div class="card-title" th:text="${album.title}"></div>
+                            <div class="card-artist" th:text="${album.artistName + (album.year != null && album.year != 0 ? ' · ' + album.year : '')}"></div>
+                            <div class="card-notes" th:text="${(album.genre != null ? album.genre : '') + (album.label != null ? ' · ' + album.label : '')}"></div>
+                            <form th:action="@{/search/add}" method="post" class="card-acts card-acts-wrap">
                                 <input type="hidden" name="title" th:value="${album.title}" />
                                 <input type="hidden" name="artistName" th:value="${album.artistName}" />
                                 <input type="hidden" name="year" th:value="${album.year}" />
@@ -62,8 +48,8 @@
                                 <input type="hidden" name="label" th:value="${album.label}" />
                                 <input type="hidden" name="discogsId" th:value="${album.discogsId}" />
                                 <input type="hidden" name="coverUrl" th:value="${album.coverUrl}" />
-                                <input type="hidden" name="format" value="VINYL" />
-                                <button type="submit" name="wishlist" value="false" class="btn" style="border-color:#e85d26;color:#e85d26;">+ COLLECTION</button>
+                                <input type="hidden" name="format" th:value="${album.discogsFormat}" />
+                                <button type="submit" name="wishlist" value="false" class="btn btn-primary">+ COLLECTION</button>
                                 <button type="submit" name="wishlist" value="true" class="btn">+ WISHLIST</button>
                             </form>
                         </div>
@@ -72,10 +58,10 @@
             </details>
 
             <details th:if="${!cassette.isEmpty()}" open>
-                <summary class="sort-label" style="cursor:pointer;margin-bottom:12px;">
-                    <span>//</span> CASSETTE <span style="color:#aaa;" th:text="'(' + ${cassette.size()} + ')'"></span>
+                <summary class="sort-label summary-label">
+                    <span>//</span> CASSETTE <span class="summary-count" th:text="'(' + ${cassette.size()} + ')'"></span>
                 </summary>
-                <div class="grid" style="margin-bottom:24px;">
+                <div class="grid grid-section">
                     <div th:each="album : ${cassette}" class="card">
                         <div class="card-cover">
                             <div th:if="${album.coverUrl != null && !album.coverUrl.isEmpty()}">
@@ -86,10 +72,10 @@
                             </div>
                         </div>
                         <div class="card-bd">
-                            <div class="card-title" th:text="${album.title}">Album</div>
-                            <div class="card-artist" th:text="${album.artistName + (album.year != 0 ? ' · ' + album.year : '')}">ARTIST</div>
-                            <div class="card-notes" th:text="${album.genre + ' · ' + album.label}">Genre · Label</div>
-                            <form th:action="@{/search/add}" method="post" class="card-acts" style="flex-wrap:wrap;gap:6px;">
+                            <div class="card-title" th:text="${album.title}"></div>
+                            <div class="card-artist" th:text="${album.artistName + (album.year != null && album.year != 0 ? ' · ' + album.year : '')}"></div>
+                            <div class="card-notes" th:text="${(album.genre != null ? album.genre : '') + (album.label != null ? ' · ' + album.label : '')}"></div>
+                            <form th:action="@{/search/add}" method="post" class="card-acts card-acts-wrap">
                                 <input type="hidden" name="title" th:value="${album.title}" />
                                 <input type="hidden" name="artistName" th:value="${album.artistName}" />
                                 <input type="hidden" name="year" th:value="${album.year}" />
@@ -97,8 +83,8 @@
                                 <input type="hidden" name="label" th:value="${album.label}" />
                                 <input type="hidden" name="discogsId" th:value="${album.discogsId}" />
                                 <input type="hidden" name="coverUrl" th:value="${album.coverUrl}" />
-                                <input type="hidden" name="format" value="VINYL" />
-                                <button type="submit" name="wishlist" value="false" class="btn" style="border-color:#e85d26;color:#e85d26;">+ COLLECTION</button>
+                                <input type="hidden" name="format" th:value="${album.discogsFormat}" />
+                                <button type="submit" name="wishlist" value="false" class="btn btn-primary">+ COLLECTION</button>
                                 <button type="submit" name="wishlist" value="true" class="btn">+ WISHLIST</button>
                             </form>
                         </div>
@@ -107,10 +93,10 @@
             </details>
 
             <details th:if="${!cd.isEmpty()}" open>
-                <summary class="sort-label" style="cursor:pointer;margin-bottom:12px;">
-                    <span>//</span> CD <span style="color:#aaa;" th:text="'(' + ${cd.size()} + ')'"></span>
+                <summary class="sort-label summary-label">
+                    <span>//</span> CD <span class="summary-count" th:text="'(' + ${cd.size()} + ')'"></span>
                 </summary>
-                <div class="grid" style="margin-bottom:24px;">
+                <div class="grid grid-section">
                     <div th:each="album : ${cd}" class="card">
                         <div class="card-cover">
                             <div th:if="${album.coverUrl != null && !album.coverUrl.isEmpty()}">
@@ -121,10 +107,10 @@
                             </div>
                         </div>
                         <div class="card-bd">
-                            <div class="card-title" th:text="${album.title}">Album</div>
-                            <div class="card-artist" th:text="${album.artistName + (album.year != 0 ? ' · ' + album.year : '')}">ARTIST</div>
-                            <div class="card-notes" th:text="${album.genre + ' · ' + album.label}">Genre · Label</div>
-                            <form th:action="@{/search/add}" method="post" class="card-acts" style="flex-wrap:wrap;gap:6px;">
+                            <div class="card-title" th:text="${album.title}"></div>
+                            <div class="card-artist" th:text="${album.artistName + (album.year != null && album.year != 0 ? ' · ' + album.year : '')}"></div>
+                            <div class="card-notes" th:text="${(album.genre != null ? album.genre : '') + (album.label != null ? ' · ' + album.label : '')}"></div>
+                            <form th:action="@{/search/add}" method="post" class="card-acts card-acts-wrap">
                                 <input type="hidden" name="title" th:value="${album.title}" />
                                 <input type="hidden" name="artistName" th:value="${album.artistName}" />
                                 <input type="hidden" name="year" th:value="${album.year}" />
@@ -132,8 +118,8 @@
                                 <input type="hidden" name="label" th:value="${album.label}" />
                                 <input type="hidden" name="discogsId" th:value="${album.discogsId}" />
                                 <input type="hidden" name="coverUrl" th:value="${album.coverUrl}" />
-                                <input type="hidden" name="format" value="VINYL" />
-                                <button type="submit" name="wishlist" value="false" class="btn" style="border-color:#e85d26;color:#e85d26;">+ COLLECTION</button>
+                                <input type="hidden" name="format" th:value="${album.discogsFormat}" />
+                                <button type="submit" name="wishlist" value="false" class="btn btn-primary">+ COLLECTION</button>
                                 <button type="submit" name="wishlist" value="true" class="btn">+ WISHLIST</button>
                             </form>
                         </div>
@@ -144,10 +130,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        <div class="ft">MEDIATHEQUE · <span class="ft-accent">PHYSICAL MEDIA LIBRARY</span></div>
-        <div class="ft">DISCOGS API</div>
-    </div>
+    <div th:replace="~{fragments/fragments :: footer('DISCOGS API')}"></div>
 </div>
 </body>
 </html>

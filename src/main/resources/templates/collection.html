@@ -8,62 +8,13 @@
 </head>
 <body>
 <div class="app">
-    <div class="hd">
-        <div>
-            <div class="logo">MEDIATHEQUE<span class="logo-dot"></span></div>
-            <div class="logo-sub">PHYSICAL MEDIA LIBRARY</div>
-        </div>
-        <div class="hd-right">
-            <form action="/search/results" method="get" style="display:inline;">
-                <input class="search-box" name="query" placeholder="SEARCH ALBUM..." />
-            </form>
-            <div class="hd-pill on">ONLINE</div>
-        </div>
-    </div>
-
-    <div class="nav">
-        <a href="/collection" class="nb on">COLLECTION</a>
-        <a href="/collection/wishlist" class="nb">WISHLIST</a>
-    </div>
+    <div th:replace="~{fragments/fragments :: header}"></div>
+    <div th:replace="~{fragments/fragments :: nav('collection')}"></div>
 
     <div class="content">
-        <div class="top-row">
-            <div class="sort-block">
-                <div class="sort-label"><span>//</span> SORT BY</div>
-                <select class="sort-select">
-                    <option>DATE (NEW → OLD)</option>
-                    <option>DATE (OLD → NEW)</option>
-                    <option>ARTIST (A → Z)</option>
-                    <option>ARTIST (Z → A)</option>
-                    <option>ALBUM (A → Z)</option>
-                    <option>ALBUM (Z → A)</option>
-                </select>
-            </div>
+        <div th:replace="~{fragments/fragments :: filters}"></div>
 
-            <div class="filter-panel">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <details class="filter-dropdown">
-                        <summary>
-                            <div class="filter-box">
-                                <span class="filter-placeholder">[ ... ]</span>
-                                <span class="filter-caret">▾</span>
-                            </div>
-                        </summary>
-                        <div class="filter-menu">
-                            <div class="filter-group">
-                                <label class="filter-title"><input type="checkbox"> TYPE</label>
-                                <label class="filter-item"><input type="checkbox"> CASSETTE</label>
-                                <label class="filter-item"><input type="checkbox"> VINYL</label>
-                                <label class="filter-item"><input type="checkbox"> CD</label>
-                            </div>
-                        </div>
-                    </details>
-                    <div class="filter-label">FILTER BY <span class="filter-accent">\\</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div th:if="${#lists.isEmpty(entries)}" class="empty-message" style="font-size:10px;color:#ccc;letter-spacing:2px;padding:40px;text-align:center;border:1.5px dashed #e0e0e0;">
+        <div th:if="${#lists.isEmpty(entries)}" class="empty-message">
             YOUR COLLECTION IS EMPTY. ADD SOME RECORDS!
         </div>
 
@@ -79,17 +30,21 @@
                     </div>
                 </div>
                 <div class="card-bd">
-                    <div class="card-title" th:text="${entry.albumTitle}">Album Title</div>
-                    <div class="card-artist" th:text="${entry.artistName + ' · ' + (entry.addedDate != null ? entry.addedDate.year : '')}">ARTIST · YEAR</div>
-                    <div class="card-fmt" th:text="${entry.format}">CASSETTE</div>
+                    <div class="card-title" th:text="${entry.albumTitle}"></div>
+                    <div class="card-artist" th:text="${entry.artistName + (entry.year != null && entry.year != 0 ? ' · ' + entry.year : '')}"></div>
+                    <div class="card-notes" th:text="${(entry.genre != null ? entry.genre : '') + (entry.label != null ? ' · ' + entry.label : '')}"></div>
+                    <div class="card-fmt" th:text="${entry.format}"></div>
                     <div class="card-row">
-                        <div class="card-date" th:text="${entry.addedDate}">2024-03-15</div>
-                        <div class="cond" th:classappend="'cond-' + ${entry.condition == T(com.mediatheque.mediatheque.model.Condition).MINT ? 'm' : (entry.condition == T(com.mediatheque.mediatheque.model.Condition).VG_PLUS ? 'vg' : 'g')}" th:text="${entry.condition}">MINT</div>
+                        <div class="card-date" th:text="${entry.addedDate}"></div>
+                        <div class="cond" th:classappend="${entry.condition == T(com.mediatheque.mediatheque.model.Condition).MINT ? 'cond-m' :
+                        (entry.condition == T(com.mediatheque.mediatheque.model.Condition).VG_PLUS ? 'cond-vg' :
+                        (entry.condition == T(com.mediatheque.mediatheque.model.Condition).GOOD ? 'cond-g' :
+                        (entry.condition == T(com.mediatheque.mediatheque.model.Condition).FAIR ? 'cond-f' : 'cond-p')))}" th:text="${entry.condition}"></div>
                     </div>
-                    <div th:if="${entry.notes != null}" class="card-notes" th:text="${entry.notes}">Notes</div>
+                    <div class="card-notes" th:text="${entry.notes}"></div>
                     <div class="card-acts">
-                        <a th:href="@{'/collection/edit/' + ${entry.id}}" class="btn">EDIT</a>
-                        <form th:action="@{'/collection/' + ${entry.id} + '/delete'}" method="post" style="display:inline;">
+                        <a th:href="@{'/edit/' + ${entry.id}}" class="btn">EDIT</a>
+                        <form th:action="@{'/' + ${entry.id} + '/delete'}" method="post" class="form-inline">
                             <button type="submit" class="btn btn-del">DELETE</button>
                         </form>
                     </div>
@@ -98,16 +53,56 @@
         </div>
     </div>
 
-    <div class="footer">
-        <div class="ft">MEDIATHEQUE · <span class="ft-accent">PHYSICAL MEDIA LIBRARY</span></div>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div class="dots">
-                <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div>
-                <div class="dot"></div><div class="dot"></div>
-            </div>
-            <div class="ft" th:text="'ITEMS: ' + ${entries.size()}">ITEMS: 0</div>
-        </div>
-    </div>
+    <div th:replace="~{fragments/fragments :: footer('COLLECTION')}"></div>
 </div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+
+        const formats = params.getAll('format');
+        document.querySelectorAll('#formatDropdown input[type=checkbox]').forEach(cb => {
+            if (formats.includes(cb.value)) cb.checked = true;
+        });
+        if (formats.length > 0) {
+            document.getElementById('formatLabel').textContent = formats.length + ' SELECTED';
+        }
+
+        const artists = params.getAll('artist');
+        document.querySelectorAll('#artistDropdown input[type=checkbox]').forEach(cb => {
+            if (artists.includes(cb.value)) cb.checked = true;
+        });
+        if (artists.length > 0) {
+            document.getElementById('artistLabel').textContent = artists.length + ' SELECTED';
+        }
+    });
+
+    function applyFilters() {
+        const formats = [...document.querySelectorAll('#formatDropdown input:checked')].map(e => e.value);
+        const artists = [...document.querySelectorAll('#artistDropdown input:checked')].map(e => e.value);
+        const sort = document.getElementById('sortSelect').value;
+        let url = '?sort=' + sort;
+        formats.forEach(f => url += '&format=' + f);
+        artists.forEach(a => url += '&artist=' + encodeURIComponent(a));
+        window.location.href = url;
+    }
+
+    function resetFormat() {
+        document.querySelectorAll('#formatDropdown input[type=checkbox]').forEach(cb => cb.checked = false);
+        const sort = document.getElementById('sortSelect').value;
+        const artists = [...document.querySelectorAll('#artistDropdown input:checked')].map(e => e.value);
+        let url = '?sort=' + sort;
+        artists.forEach(a => url += '&artist=' + encodeURIComponent(a));
+        window.location.href = url;
+    }
+
+    function resetArtist() {
+        document.querySelectorAll('#artistDropdown input[type=checkbox]').forEach(cb => cb.checked = false);
+        const sort = document.getElementById('sortSelect').value;
+        const formats = [...document.querySelectorAll('#formatDropdown input:checked')].map(e => e.value);
+        let url = '?sort=' + sort;
+        formats.forEach(f => url += '&format=' + f);
+        window.location.href = url;
+    }
+</script>
 </body>
 </html>

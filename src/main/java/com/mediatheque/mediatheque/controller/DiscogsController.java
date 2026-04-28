@@ -1,11 +1,11 @@
 package com.mediatheque.mediatheque.controller;
 
 import com.mediatheque.mediatheque.dto.AlbumDTO;
+import com.mediatheque.mediatheque.dto.CollectionEntryDTO;
 import com.mediatheque.mediatheque.model.Format;
 import com.mediatheque.mediatheque.service.AlbumService;
 import com.mediatheque.mediatheque.service.CollectionEntryService;
 import com.mediatheque.mediatheque.service.DiscogsService;
-import com.mediatheque.mediatheque.dto.CollectionEntryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,13 +35,13 @@ public class DiscogsController {
         List<AlbumDTO> results = discogsService.searchAlbums(query);
 
         List<AlbumDTO> vinyl = results.stream()
-                .filter(a -> "VINYL".equals(a.getDiscogsFormat()))
+                .filter(a -> Format.VINYL.equals(a.getDiscogsFormat()))
                 .collect(java.util.stream.Collectors.toList());
         List<AlbumDTO> cassette = results.stream()
-                .filter(a -> "CASSETTE".equals(a.getDiscogsFormat()))
+                .filter(a -> Format.CASSETTE.equals(a.getDiscogsFormat()))
                 .collect(java.util.stream.Collectors.toList());
         List<AlbumDTO> cd = results.stream()
-                .filter(a -> "CD".equals(a.getDiscogsFormat()))
+                .filter(a -> Format.CD.equals(a.getDiscogsFormat()))
                 .collect(java.util.stream.Collectors.toList());
 
         model.addAttribute("vinyl", vinyl);
@@ -64,9 +64,9 @@ public class DiscogsController {
             entryDTO.setFormat(Format.valueOf(format));
             entryDTO.setInWishlist(true);
             collectionEntryService.createEntry(entryDTO);
-            return "redirect:/collection/wishlist";
+            return "redirect:/wishlist";
         }
 
-        return "redirect:/collection/add/" + savedAlbum.getId() + "?format=" + format;
+        return "redirect:/add/" + savedAlbum.getId() + "?format=" + format;
     }
 }

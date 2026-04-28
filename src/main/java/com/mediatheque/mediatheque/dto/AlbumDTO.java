@@ -1,5 +1,6 @@
 package com.mediatheque.mediatheque.dto;
 
+import com.mediatheque.mediatheque.model.Format;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,7 @@ public class AlbumDTO {
     private String genre;
     private String label;
     private String discogsId;
-    private String discogsFormat;
+    private Format discogsFormat;
     private String coverUrl;
     private String artistName;
-    private Long artistId;
 }

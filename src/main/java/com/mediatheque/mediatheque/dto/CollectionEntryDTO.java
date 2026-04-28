@@ -21,4 +21,7 @@ public class CollectionEntryDTO {
     private String albumTitle;
     private String artistName;
     private String coverUrl;
+    private String genre;
+    private String label;
+    private Integer year;
 }

@@ -2,6 +2,8 @@ package com.mediatheque.mediatheque.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "artists")
 @Data
+@ToString(exclude = "albums")
+@EqualsAndHashCode(exclude = "albums")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Artist {

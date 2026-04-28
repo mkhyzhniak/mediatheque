@@ -4,25 +4,15 @@ import com.mediatheque.mediatheque.dto.AlbumDTO;
 import com.mediatheque.mediatheque.model.Album;
 import com.mediatheque.mediatheque.model.Artist;
 import com.mediatheque.mediatheque.repository.AlbumRepository;
-import com.mediatheque.mediatheque.repository.ArtistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AlbumService {
 
     private final AlbumRepository albumRepository;
-    private final ArtistRepository artistRepository;
-
-    public List<AlbumDTO> getAllAlbums() {
-        return albumRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
+    private final ArtistService artistService;
 
     public AlbumDTO getAlbumById(Long id) {
         Album album = albumRepository.findById(id)
@@ -31,7 +21,14 @@ public class AlbumService {
     }
 
     public AlbumDTO createAlbum(AlbumDTO dto) {
-        Artist artist = findOrCreateArtist(dto.getArtistName());
+        if (dto.getDiscogsId() != null && !dto.getDiscogsId().isEmpty()) {
+            var existing = albumRepository.findFirstByDiscogsId(dto.getDiscogsId());
+            if (existing.isPresent()) {
+                return toDTO(existing.get());
+            }
+        }
+
+        Artist artist = artistService.findOrCreateArtist(dto.getArtistName());
         Album album = new Album();
         album.setTitle(dto.getTitle());
         album.setYear(dto.getYear());
@@ -44,22 +41,6 @@ public class AlbumService {
         return toDTO(saved);
     }
 
-    public void deleteAlbum(Long id) {
-        albumRepository.deleteById(id);
-    }
-
-    private Artist findOrCreateArtist(String name) {
-        return artistRepository.findAll()
-                .stream()
-                .filter(a -> a.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElseGet(() -> {
-                    Artist newArtist = new Artist();
-                    newArtist.setName(name);
-                    return artistRepository.save(newArtist);
-                });
-    }
-
     private AlbumDTO toDTO(Album album) {
         AlbumDTO dto = new AlbumDTO();
         dto.setId(album.getId());
@@ -70,7 +51,6 @@ public class AlbumService {
         dto.setDiscogsId(album.getDiscogsId());
         dto.setCoverUrl(album.getCoverUrl());
         dto.setArtistName(album.getArtist().getName());
-        dto.setArtistId(album.getArtist().getId());
         return dto;
     }
 }
