@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mediatheque — Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body class="body-light">
+<div class="auth-container">
+    <div class="auth-title">MEDIATHEQUE<span class="logo-dot"></span></div>
+    <div class="auth-subtitle">PHYSICAL MEDIA LIBRARY</div>
+
+    <div class="auth-form-title">// LOGIN</div>
+
+    <div th:if="${param.error}" class="alert-error">
+        WRONG USERNAME OR PASSWORD
+    </div>
+
+    <div th:if="${param.registered}" class="alert-success">
+        REGISTRATION SUCCESSFUL. PLEASE LOGIN.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label class="form-label">USERNAME</label>
+            <input type="text" name="username" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">PASSWORD</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">LOGIN</button>
+    </form>
+
+    <div class="auth-footer">
+        NO ACCOUNT? <a href="/register" class="auth-link">REGISTER</a>
+    </div>
+</div>
+</body>
+</html>

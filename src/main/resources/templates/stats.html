@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mediatheque — Stats</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/fragments :: header}"></div>
+    <div th:replace="~{fragments/fragments :: nav('stats')}"></div>
+
+    <div class="content">
+        <div class="sort-label stats-section-title-top"><span>//</span> COLLECTION STATS</div>
+
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-card-label">TOTAL ITEMS</div>
+                <div class="stats-card-value" th:text="${totalItems}">0</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-card-label">ARTISTS</div>
+                <div class="stats-card-value" th:text="${totalArtists}">0</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-card-label">ALBUMS</div>
+                <div class="stats-card-value" th:text="${totalAlbums}">0</div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-section-title">BY FORMAT</div>
+            <div class="bar-row">
+                <div class="bar-label">VINYL</div>
+                <div class="bar-track">
+                    <div class="bar-fill"
+                         th:attr="style='width:' + (${totalItems > 0} ? (${vinylCount * 100 / totalItems}) : 0) + '%'"></div>
+                </div>
+                <div class="bar-count" th:text="${vinylCount}">0</div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">CASSETTE</div>
+                <div class="bar-track">
+                    <div class="bar-fill"
+                         th:attr="style='width:' + (${totalItems > 0} ? (${cassetteCount * 100 / totalItems}) : 0) + '%'"></div>
+                </div>
+                <div class="bar-count" th:text="${cassetteCount}">0</div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">CD</div>
+                <div class="bar-track">
+                    <div class="bar-fill"
+                         th:attr="style='width:' + (${totalItems > 0} ? (${cdCount * 100 / totalItems}) : 0) + '%'"></div>
+                </div>
+                <div class="bar-count" th:text="${cdCount}">0</div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-section-title">BY GENRE</div>
+            <div th:each="genre : ${topGenres}" class="bar-row">
+                <div class="bar-label" th:text="${genre.key}">ROCK</div>
+                <div class="bar-track">
+                    <div class="bar-fill-grey"
+                         th:attr="style='width:' + (${totalItems > 0} ? (${genre.value * 100 / totalItems}) : 0) + '%'"></div>
+                </div>
+                <div class="bar-count" th:text="${genre.value}">0</div>
+            </div>
+        </div>
+
+        <div class="stats-cards-row">
+            <div class="stats-card-sm">
+                <div class="stats-card-label-sm">TOP ARTIST</div>
+                <div class="stats-card-value-sm" th:text="${topArtist}">—</div>
+                <div class="stats-card-accent" th:text="${topArtistCount + ' items'}">0 items</div>
+            </div>
+            <div class="stats-card-sm">
+                <div class="stats-card-label-sm">TOP FORMAT</div>
+                <div class="stats-card-value-sm" th:text="${topFormat}">—</div>
+                <div class="stats-card-accent" th:text="${topFormatCount + ' items'}">0 items</div>
+            </div>
+            <div class="stats-card-sm">
+                <div class="stats-card-label-sm">TOP GENRE</div>
+                <div class="stats-card-value-sm" th:text="${topGenre}">—</div>
+                <div class="stats-card-accent" th:text="${topGenreCount + ' items'}">0 items</div>
+            </div>
+        </div>
+
+        <hr class="stats-divider">
+
+        <div class="sort-label stats-section-title-top"><span>//</span> WISHLIST STATS</div>
+
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-card-label">WANTED</div>
+                <div class="stats-card-value" th:text="${wishlistItems}">0</div>
+            </div>
+        </div>
+
+        <div class="stats-section-mt">
+            <div class="stats-section-title">BY GENRE</div>
+            <div th:each="genre : ${wishTopGenres}" class="bar-row">
+                <div class="bar-label" th:text="${genre.key}">ROCK</div>
+                <div class="bar-track">
+                    <div class="bar-fill-grey"
+                         th:attr="style='width:' + (${wishlistItems > 0} ? (${genre.value * 100 / wishlistItems}) : 0) + '%'"></div>
+                </div>
+                <div class="bar-count" th:text="${genre.value}">0</div>
+            </div>
+        </div>
+
+        <div class="stats-cards-row">
+            <div class="stats-card-sm">
+                <div class="stats-card-label-sm">MOST WANTED ARTIST</div>
+                <div class="stats-card-value-sm" th:text="${wishTopArtist}">—</div>
+                <div class="stats-card-accent" th:text="${wishTopArtistCount + ' items'}">0 items</div>
+            </div>
+            <div class="stats-card-sm">
+                <div class="stats-card-label-sm">MOST WANTED GENRE</div>
+                <div class="stats-card-value-sm" th:text="${wishTopGenre}">—</div>
+                <div class="stats-card-accent" th:text="${wishTopGenreCount + ' items'}">0 items</div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/fragments :: footer('STATS')}"></div>
+</div>
+</body>
+</html>

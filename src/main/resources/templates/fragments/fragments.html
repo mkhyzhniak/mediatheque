@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header">
+    <div class="hd">
+        <div>
+            <div class="logo">MEDIATHEQUE<span class="logo-dot"></span></div>
+            <div class="logo-sub">PHYSICAL MEDIA LIBRARY</div>
+        </div>
+        <div class="hd-right">
+            <form action="/search/results" method="get" class="search-form">
+                <input class="search-box" name="query" placeholder="SEARCH ALBUM..." />
+            </form>
+            <div class="user-menu-wrap">
+                <details class="user-menu-details">
+                    <summary style="list-style:none;cursor:pointer;">
+                        <div class="user-icon">
+                            <div class="user-icon-head"></div>
+                            <div class="user-icon-body"></div>
+                        </div>
+                    </summary>
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-label">LOGGED IN AS</div>
+                        <div class="user-dropdown-name" th:text="${username}">USER</div>
+                        <form action="/logout" method="post">
+                            <button type="submit" class="btn btn-logout">LOGOUT</button>
+                        </form>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="nav(active)">
+    <div class="nav nav-main">
+        <div class="nav-left">
+            <a href="/" th:classappend="${active == 'collection'} ? 'on' : ''" class="nb">COLLECTION</a>
+            <a href="/wishlist" th:classappend="${active == 'wishlist'} ? 'on' : ''" class="nb">WISHLIST</a>
+        </div>
+        <a href="/stats" th:classappend="${active == 'stats'} ? 'on' : ''" class="nb"><span>&gt;_</span> STATS</a>
+    </div>
+</div>
+
+<div th:fragment="filters">
+    <div class="top-row">
+        <div class="sort-block">
+            <div class="sort-label"><span>//</span> SORT BY</div>
+            <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+                <option value="DATE_NEW" th:selected="${sort == 'DATE_NEW'}">DATE (NEW → OLD)</option>
+                <option value="DATE_OLD" th:selected="${sort == 'DATE_OLD'}">DATE (OLD → NEW)</option>
+                <option value="ARTIST_AZ" th:selected="${sort == 'ARTIST_AZ'}">ARTIST (A → Z)</option>
+                <option value="ARTIST_ZA" th:selected="${sort == 'ARTIST_ZA'}">ARTIST (Z → A)</option>
+                <option value="ALBUM_AZ" th:selected="${sort == 'ALBUM_AZ'}">ALBUM (A → Z)</option>
+                <option value="ALBUM_ZA" th:selected="${sort == 'ALBUM_ZA'}">ALBUM (Z → A)</option>
+            </select>
+        </div>
+        <div class="filter-panel">
+            <div class="filter-row">
+                <details class="filter-dropdown" id="formatDropdown">
+                    <summary>
+                        <div class="sort-select filter-row">
+                            <span id="formatLabel">ALL FORMATS</span>
+                            <span class="filter-caret-icon">▾</span>
+                        </div>
+                    </summary>
+                    <div class="filter-menu">
+                        <label class="filter-item"><input type="checkbox" value="VINYL"> VINYL</label>
+                        <label class="filter-item"><input type="checkbox" value="CASSETTE"> CASSETTE</label>
+                        <label class="filter-item"><input type="checkbox" value="CD"> CD</label>
+                        <div class="filter-actions">
+                            <button class="nb" onclick="applyFilters()" style="border-color:#e85d26;color:#e85d26;">APPLY</button>
+                            <button class="nb" onclick="resetFormat()">RESET</button>
+                        </div>
+                    </div>
+                </details>
+                <details class="filter-dropdown" id="artistDropdown">
+                    <summary>
+                        <div class="sort-select filter-row">
+                            <span id="artistLabel">ALL ARTISTS</span>
+                            <span class="filter-caret-icon">▾</span>
+                        </div>
+                    </summary>
+                    <div class="filter-menu">
+                        <label class="filter-item" th:each="a : ${artists}">
+                            <input type="checkbox" th:value="${a}"> <span th:text="${a}"></span>
+                        </label>
+                        <div class="filter-actions">
+                            <button class="nb" onclick="applyFilters()" style="border-color:#e85d26;color:#e85d26;">APPLY</button>
+                            <button class="nb" onclick="resetArtist()">RESET</button>
+                        </div>
+                    </div>
+                </details>
+                <div class="filter-label">FILTER BY <span class="filter-accent">\\</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="footer(pageTitle)">
+    <div class="footer">
+        <div class="ft">MEDIATHEQUE · <span class="ft-accent">PHYSICAL MEDIA LIBRARY</span></div>
+        <div class="ft" th:text="${pageTitle}">PAGE</div>
+    </div>
+</div>
+
+</body>
+</html>
